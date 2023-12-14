@@ -4,7 +4,8 @@
   "description": "This is backend api for book-shelf project which allows users to sell and purchase books",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec ts-node src/index.ts"
+    "dev": "nodemon --watch \"src/**\" --ext \"ts,json\" --exec ts-node src/index.ts",
+    "start": "ts-node src/index.ts"
   },
   "author": "Asad Shafiq",
   "license": "ISC",
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.6",
+    "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "nodemon": "^3.0.2",
