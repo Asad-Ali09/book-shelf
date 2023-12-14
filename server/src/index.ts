@@ -2,15 +2,26 @@ import "express-async-errors";
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
+import cookieParser from "cookie-parser";
+
+import UserRoute from "./routes/User";
 import errorhandler from "./middlewares/errorHandler";
 import notFound from "./middlewares/notFound";
 
 const port = process.env.PORT || 5500;
 const app = express();
 
+// Middlewares
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cookieParser());
+
+// Routes
 app.get("/", (req, res) => {
   res.status(200).send("hello world!");
 });
+
+app.use("/api/v1/auth", UserRoute);
 
 // Erro handling
 app.use(errorhandler);

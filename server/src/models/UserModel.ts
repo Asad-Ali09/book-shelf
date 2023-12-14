@@ -1,11 +1,18 @@
 import mongoose, { Document, Schema } from "mongoose";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 interface IUser extends Document {
-  name: String;
-  readonly email: String;
-  password: String;
-  profilePicture?: String;
-  isGoogleID: boolean;
+  name: string;
+  readonly email: string;
+  password: string;
+  profilePicture?: string;
+  toResponseObject(): {
+    name: string;
+    email: string;
+  };
+  comparePassword(candidatePassword: string): Promise<boolean>;
+  createJWT(): string;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -32,11 +39,49 @@ const UserSchema = new Schema<IUser>({
     minlength: [6, "Password must be at least 6 characters"],
   },
   profilePicture: String,
-  isGoogleID: {
-    type: Boolean,
-    required: true,
-  },
 });
+
+// Hash password before saving
+UserSchema.pre("save", async function (next) {
+  if (!this.password || !this.isModified("password")) {
+    next();
+  }
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password as string, salt);
+  next();
+});
+
+//---- Convert to object that should be sent to user ------------------------------
+UserSchema.methods.toResponseObject = function () {
+  const user = this.toObject() as IUser;
+
+  const filteredUser = Object.keys(user)
+    .filter((k) => k !== "password")
+    .reduce((acc: Record<string, any>, key: string) => {
+      acc[key] = user[key as keyof typeof user];
+      return acc;
+    }, {});
+
+  return filteredUser;
+};
+
+// --- Create JSON web token ---------------
+UserSchema.methods.createJWT = function () {
+  return jwt.sign(
+    { userID: this._id, email: this.email },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: process.env.JWT_EXPIRY!,
+    }
+  );
+};
+
+//---- Check if password is valid ------------------------------------------------
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const UserModel = mongoose.model<IUser>("User", UserSchema);
 export default UserModel;
