@@ -12,6 +12,12 @@ import notFound from "./middlewares/notFound";
 const port = process.env.PORT || 5500;
 const app = express();
 
+declare module "express-serve-static-core" {
+  export interface Request {
+    user: any;
+  }
+}
+
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

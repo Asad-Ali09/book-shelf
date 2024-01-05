@@ -15,6 +15,11 @@ interface IUser extends Document {
   createJWT(): string;
 }
 
+type TokenType = {
+  userID: string;
+  email: string;
+};
+
 const UserSchema = new Schema<IUser>({
   name: {
     type: String,
@@ -67,13 +72,13 @@ UserSchema.methods.toResponseObject = function () {
 
 // --- Create JSON web token ---------------
 UserSchema.methods.createJWT = function () {
-  return jwt.sign(
-    { userID: this._id, email: this.email },
-    process.env.JWT_SECRET!,
-    {
-      expiresIn: process.env.JWT_EXPIRY!,
-    }
-  );
+  const payload: TokenType = {
+    userID: this._id,
+    email: this.email,
+  };
+  return jwt.sign(payload, process.env.JWT_SECRET!, {
+    expiresIn: process.env.JWT_EXPIRY!,
+  });
 };
 
 //---- Check if password is valid ------------------------------------------------
@@ -86,4 +91,4 @@ UserSchema.methods.comparePassword = async function (
 const UserModel = mongoose.model<IUser>("User", UserSchema);
 export default UserModel;
 
-export { IUser };
+export { IUser, TokenType };
