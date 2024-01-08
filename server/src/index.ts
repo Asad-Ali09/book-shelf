@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import UserRoute from "./routes/User";
+import BookRoute from "./routes/Book";
 import errorhandler from "./middlewares/errorHandler";
 import notFound from "./middlewares/notFound";
 
@@ -36,6 +37,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", UserRoute);
+app.use("/api/v1/books", BookRoute);
 
 // Erro handling
 app.use(errorhandler);

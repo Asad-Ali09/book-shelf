@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Mongoose } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { IUser } from "./UserModel";
 
 interface IBook extends Document {
@@ -7,6 +7,8 @@ interface IBook extends Document {
   coverPhoto: string;
   author: IUser["_id"];
   price: number;
+  quantity: number;
+  readonly createdAt: Date;
 }
 
 const bookSchema = new Schema<IBook>({
@@ -31,7 +33,14 @@ const bookSchema = new Schema<IBook>({
     required: [true, "Please provide an author"],
   },
   price: { type: Number, required: [true, "Please Provide price for book"] },
+  quantity: { type: Number, default: 1 },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const BookModel = mongoose.model<IBook>("Book", bookSchema);
 export default BookModel;
+
+export { IBook };
