@@ -1,3 +1,4 @@
+import { CircularProgress, Link as MUILink, Stack } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -6,10 +7,13 @@ import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
-import { Link as MUILink } from "@mui/material";
+import { FormEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 import logoSrc from "../assets/logo.png";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
+import { loginUser } from "../redux/auth/authServices";
+import { setError } from "../redux/auth/authSlice";
 
 function Copyright(props: any) {
   return (
@@ -33,19 +37,34 @@ const initialState = {
   email: "",
   password: "",
 };
-type FromDataType = typeof initialState;
+export type FromDataType = typeof initialState;
 
 export default function SignIn() {
   const [formData, setFormData] = useState<FromDataType>(initialState);
   const { email, password } = formData;
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { error, loading, isLoggedIn } = useAppSelector((state) => state.auth);
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    // TODO: Make a request tp server
-
-    setFormData(initialState);
+    dispatch(loginUser({ email, password }));
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+    dispatch(setError(null));
+  }, [error]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setFormData(initialState);
+      navigate("/");
+    }
+  }, [isLoggedIn]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -72,7 +91,9 @@ export default function SignIn() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            type="email"
             autoFocus
+            disabled={loading}
             value={email}
             onChange={(e) => {
               setFormData({ ...formData, email: e.target.value });
@@ -86,6 +107,7 @@ export default function SignIn() {
             label="Password"
             type="password"
             id="password"
+            disabled={loading}
             autoComplete="current-password"
             value={password}
             onChange={(e) => {
@@ -93,6 +115,7 @@ export default function SignIn() {
             }}
           />
           <FormControlLabel
+            disabled={loading}
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
@@ -101,8 +124,12 @@ export default function SignIn() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
-            Sign In
+            <Stack direction={"row"} alignItems={"center"} spacing={1}>
+              <Typography>Sign In</Typography>
+              {loading && <CircularProgress color="inherit" size={20} />}
+            </Stack>
           </Button>
 
           <Box>
