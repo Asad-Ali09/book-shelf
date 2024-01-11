@@ -1,5 +1,5 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { loginUser } from "./authServices";
+import { PayloadAction, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { loginUser, signUp } from "./authServices";
 
 //TODO: load user data from local storage
 const user: IUser = {
@@ -33,21 +33,27 @@ const authSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addCase(loginUser.pending, (state) => {
+    builder.addMatcher(isAnyOf(loginUser.pending, signUp.pending), (state) => {
       state.loading = true;
       state.error = null;
     });
-    builder.addCase(loginUser.fulfilled, (state, action) => {
-      const user = action.payload.data;
-      state.loading = false;
-      state.user = user;
-      localStorage.setItem("user", JSON.stringify(user));
-      state.isLoggedIn = true;
-    });
-    builder.addCase(loginUser.rejected, (state, action: PayloadAction<any>) => {
-      state.loading = false;
-      state.error = action.payload;
-    });
+    builder.addMatcher(
+      isAnyOf(loginUser.fulfilled, signUp.fulfilled),
+      (state, action) => {
+        const user = action.payload.data;
+        state.loading = false;
+        state.user = user;
+        localStorage.setItem("user", JSON.stringify(user));
+        state.isLoggedIn = true;
+      }
+    );
+    builder.addMatcher(
+      isAnyOf(loginUser.rejected, signUp.rejected),
+      (state, action: PayloadAction<any>) => {
+        state.loading = false;
+        state.error = action.payload;
+      }
+    );
   },
 });
 

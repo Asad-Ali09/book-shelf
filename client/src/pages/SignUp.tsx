@@ -6,10 +6,14 @@ import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
-import { Link as MUILink } from "@mui/material";
+import { FormEvent, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { CircularProgress, Link as MUILink, Stack } from "@mui/material";
 import logoSrc from "../assets/logo.png";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
+import { signUp } from "../redux/auth/authServices";
+import toast from "react-hot-toast";
+import { setError } from "../redux/auth/authSlice";
 
 function Copyright(props: any) {
   return (
@@ -35,18 +39,39 @@ const initialState = {
   password: "",
   confirmPassword: "",
 };
-type FromDataType = typeof initialState;
+export type SignUpFormType = typeof initialState;
 
 export default function SignIn() {
-  const [formData, setFormData] = useState<FromDataType>(initialState);
+  const [formData, setFormData] = useState<SignUpFormType>(initialState);
   const { name, email, password, confirmPassword } = formData;
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error, isLoggedIn } = useAppSelector((state) => state.auth);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // TODO: Make a request to server
-
-    setFormData(initialState);
+    if (password !== confirmPassword) {
+      return toast.error("Passwords do not match");
+    }
+    if (password.length < 6)
+      return toast.error("Password must be atleast 6 characters");
+    dispatch(signUp(formData));
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      setFormData(initialState);
+      navigate("/");
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+    dispatch(setError(null));
+  }, [error]);
 
   return (
     <Container component="main" maxWidth="xs">
@@ -78,6 +103,7 @@ export default function SignIn() {
             onChange={(e) => {
               setFormData({ ...formData, name: e.target.value });
             }}
+            disabled={loading}
           />
           <TextField
             margin="normal"
@@ -92,6 +118,7 @@ export default function SignIn() {
             onChange={(e) => {
               setFormData({ ...formData, email: e.target.value });
             }}
+            disabled={loading}
           />
           <TextField
             margin="normal"
@@ -105,6 +132,7 @@ export default function SignIn() {
             onChange={(e) => {
               setFormData({ ...formData, password: e.target.value });
             }}
+            disabled={loading}
           />
           <TextField
             margin="normal"
@@ -118,18 +146,24 @@ export default function SignIn() {
             onChange={(e) => {
               setFormData({ ...formData, confirmPassword: e.target.value });
             }}
+            disabled={loading}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
+            disabled={loading}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
-            Register
+            <Stack direction={"row"} alignItems={"center"} spacing={1}>
+              <Typography>Register</Typography>
+              {loading && <CircularProgress color="inherit" size={20} />}
+            </Stack>
           </Button>
 
           <Box>
