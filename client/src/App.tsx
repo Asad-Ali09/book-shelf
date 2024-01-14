@@ -10,6 +10,7 @@ import SignUp from "./pages/SignUp";
 import DashBoard from "./pages/User/DashBoard";
 import OrdersCompleted from "./pages/User/OrdersCompleted";
 import { useState } from "react";
+import MyBooks from "./pages/User/MyBooks";
 
 axios.defaults.withCredentials = true;
 
@@ -41,6 +42,7 @@ const App = () => {
             <Route index element={<NotFound />} />
             <Route path="orders" element={<OrdersCompleted />} />
             <Route path="dashboard" element={<DashBoard />} />
+            <Route path="books" element={<MyBooks />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

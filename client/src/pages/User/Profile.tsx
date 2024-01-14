@@ -10,7 +10,6 @@ import {
   Box,
   Button,
   Divider,
-  Drawer,
   List,
   ListItem,
   ListItemButton,
@@ -124,7 +123,7 @@ const Profile = ({ mobileOpen, setMobileOpen, setIsClosing }: ProfileProps) => {
       >
         {drawer}
       </SideBar>
-      <Box sx={{ flexGrow: 1 }} p={2}>
+      <Box sx={{ flexGrow: 1 }} p={1}>
         <Toolbar />
         {/* All User Profile Routes will be displayed Here */}
         <Outlet />
