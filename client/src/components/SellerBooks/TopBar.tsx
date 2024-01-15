@@ -30,7 +30,7 @@ import {
   Theme,
   Toolbar,
   Typography,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
@@ -356,7 +356,7 @@ const TopBar = () => {
   );
 };
 
-const bookGenres = [
+export const bookGenres = [
   "Fiction",
   "Mystery",
   "Thriller",

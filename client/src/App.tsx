@@ -11,12 +11,19 @@ import DashBoard from "./pages/User/DashBoard";
 import OrdersCompleted from "./pages/User/OrdersCompleted";
 import { useState } from "react";
 import MyBooks from "./pages/User/MyBooks";
+import Store from "./pages/Store";
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+
+  const sideBarProps = {
+    mobileOpen,
+    setIsClosing,
+    setMobileOpen,
+  };
 
   return (
     <>
@@ -29,15 +36,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route
             path="/profile"
-            element={
-              <>
-                <Profile
-                  mobileOpen={mobileOpen}
-                  setIsClosing={setIsClosing}
-                  setMobileOpen={setMobileOpen}
-                />{" "}
-              </>
-            }
+            element={<Profile sideBarProps={sideBarProps} />}
           >
             <Route index element={<NotFound />} />
             <Route path="orders" element={<OrdersCompleted />} />
@@ -45,6 +44,9 @@ const App = () => {
             <Route path="books" element={<MyBooks />} />
             <Route path="*" element={<NotFound />} />
           </Route>
+
+          <Route path="store" element={<Store sideBarProps={sideBarProps} />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
 
         <Toaster />

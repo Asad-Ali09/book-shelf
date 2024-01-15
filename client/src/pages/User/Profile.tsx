@@ -24,12 +24,15 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar";
 
 interface ProfileProps {
-  mobileOpen: boolean;
-  setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsClosing: React.Dispatch<React.SetStateAction<boolean>>;
+  sideBarProps: {
+    mobileOpen: boolean;
+    setMobileOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsClosing: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }
 
-const Profile = ({ mobileOpen, setMobileOpen, setIsClosing }: ProfileProps) => {
+const Profile = ({ sideBarProps }: ProfileProps) => {
+  const { mobileOpen, setMobileOpen, setIsClosing } = sideBarProps;
   const drawerWidth = 240;
 
   const [selected, setSelected] = useState(0);
