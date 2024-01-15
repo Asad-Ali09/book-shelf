@@ -34,7 +34,19 @@ import {
 } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { TransitionProps } from "@mui/material/transitions";
-import { ChangeEvent, MouseEvent, forwardRef, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  MouseEvent,
+  forwardRef,
+  useEffect,
+  useState,
+} from "react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../../hooks/useTypedSelector";
+import { addBook, addBookPropsType } from "../../redux/auth/sellerServices";
+import uploadImage from "../../utils/uploadImage";
+import { setError } from "../../redux/auth/authSlice";
 
 const top100Films = [
   { title: "The Shawshank Redemption", year: 1994 },
@@ -55,6 +67,24 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
+type addBookFormType = {
+  title: string;
+  author: string;
+  description: string;
+  price: number | null;
+  quantity: number | null;
+  genre: string[];
+};
+
+const addBookFormState: addBookFormType = {
+  title: "",
+  author: "",
+  description: "",
+  price: null,
+  quantity: null,
+  genre: [],
+};
+
 const TopBar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const openSortMenu = Boolean(anchorEl);
@@ -67,15 +97,22 @@ const TopBar = () => {
 
   const [open, setOpen] = useState(false);
 
-  const handleClickDailogOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setOpen(false);
-  };
-
   const sm = useMediaQuery((theme: Theme) => theme.breakpoints.up("sm"));
+
+  // Add Book
+  const [addBookForm, setAddBookForm] =
+    useState<addBookFormType>(addBookFormState);
+  const { title, author, description, price, quantity } = addBookForm;
+
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(setError(null));
+    }
+  }, [error]);
 
   const [selectedNames, setSelectedNames] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -93,6 +130,48 @@ const TopBar = () => {
     };
 
     reader.readAsDataURL(selecteFile);
+  };
+
+  const handleClickDailogOpen = () => {
+    setOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setAddBookForm(addBookFormState);
+    setFile(null);
+    setImgUrl(null);
+    setSelectedNames([]);
+    setOpen(false);
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (price === null || quantity === null || imgUrl === null) {
+      return;
+    }
+    // upload Image to cloudinary
+    let coverPhoto = "";
+    try {
+      coverPhoto = await uploadImage(file as File);
+    } catch (error: any) {
+      toast.error(error.message || "Error in uploading image");
+      return;
+    }
+
+    // request to backend for adding book
+    const formData = {
+      ...addBookForm,
+      genres: selectedNames,
+      coverPhoto,
+    };
+
+    dispatch(addBook(formData as addBookPropsType))
+      .unwrap()
+      .then((_) => {
+        toast.success("Book Added Successfully");
+        handleDialogClose();
+      });
   };
 
   return (
@@ -186,30 +265,42 @@ const TopBar = () => {
         onClose={handleDialogClose}
         TransitionComponent={Transition}
       >
-        <AppBar sx={{ position: "relative" }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleDialogClose}
-              aria-label="close"
-            >
-              <Close />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Add new Book
-            </Typography>
-            <Button color="inherit" onClick={handleDialogClose}>
-              Cancel
-            </Button>
-            <Button autoFocus color="inherit" onClick={handleDialogClose}>
-              save
-            </Button>
-          </Toolbar>
-        </AppBar>
+        <form onSubmit={handleSubmit}>
+          <AppBar sx={{ position: "relative" }}>
+            <Toolbar>
+              <IconButton
+                edge="start"
+                color="inherit"
+                disabled={loading}
+                onClick={handleDialogClose}
+                aria-label="close"
+              >
+                <Close />
+              </IconButton>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                Add new Book
+              </Typography>
+              <Button
+                color="inherit"
+                onClick={handleDialogClose}
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button
+                autoFocus
+                color="inherit"
+                type="submit"
+                disabled={loading}
+                // onClick={handleDialogClose}
+              >
+                save
+              </Button>
+            </Toolbar>
+          </AppBar>
 
-        {/* Form to Add Book */}
-        <form>
+          {/* Form to Add Book */}
+
           <Container maxWidth={"md"}>
             <Grid container p={2} spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -219,6 +310,11 @@ const TopBar = () => {
                   fullWidth
                   id="Title"
                   label="Title"
+                  value={title}
+                  disabled={loading}
+                  onChange={(e) =>
+                    setAddBookForm({ ...addBookForm, title: e.target.value })
+                  }
                   autoFocus
                 />
               </Grid>
@@ -229,6 +325,11 @@ const TopBar = () => {
                   id="Author"
                   label="Author"
                   name="Author"
+                  disabled={loading}
+                  value={author}
+                  onChange={(e) =>
+                    setAddBookForm({ ...addBookForm, author: e.target.value })
+                  }
                 />
               </Grid>
 
@@ -241,6 +342,14 @@ const TopBar = () => {
                   name="description"
                   multiline
                   maxRows={4}
+                  disabled={loading}
+                  value={description}
+                  onChange={(e) =>
+                    setAddBookForm({
+                      ...addBookForm,
+                      description: e.target.value,
+                    })
+                  }
                 />
               </Grid>
 
@@ -252,6 +361,15 @@ const TopBar = () => {
                   id="price"
                   label="price"
                   name="price"
+                  disabled={loading}
+                  value={price || ""}
+                  onChange={(e) =>
+                    setAddBookForm({
+                      ...addBookForm,
+                      price:
+                        Number(e.target.value) > 0 ? Number(e.target.value) : 0,
+                    })
+                  }
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -262,6 +380,15 @@ const TopBar = () => {
                   id="quantity"
                   label="quantity"
                   name="quantity"
+                  disabled={loading}
+                  value={quantity || ""}
+                  onChange={(e) =>
+                    setAddBookForm({
+                      ...addBookForm,
+                      quantity:
+                        Number(e.target.value) > 0 ? Number(e.target.value) : 0,
+                    })
+                  }
                 />
               </Grid>
 
@@ -270,6 +397,8 @@ const TopBar = () => {
                   <InputLabel>{"Genre *"}</InputLabel>
                   <Select
                     multiple
+                    required
+                    disabled={loading}
                     value={selectedNames}
                     onChange={(event) => {
                       if (event.target.value.length > 3) return;
@@ -322,7 +451,9 @@ const TopBar = () => {
                   Upload file
                   <VisuallyHiddenInput
                     type="file"
+                    required
                     accept="image/*"
+                    disabled={loading}
                     onChange={handleFileChange}
                   />
                 </Button>

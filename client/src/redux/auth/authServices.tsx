@@ -41,4 +41,9 @@ const signUp = createAsyncThunk(
   }
 );
 
-export { loginUser, signUp };
+const logout = createAsyncThunk("authSlice/logout", async () => {
+  await axios.post(`${authURL}/logout`);
+  localStorage.removeItem("user");
+});
+
+export { loginUser, signUp, logout };

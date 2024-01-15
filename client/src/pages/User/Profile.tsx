@@ -22,6 +22,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar";
+import { useAppDispatch } from "../../hooks/useTypedSelector";
+import { getAllSellerBooks } from "../../redux/auth/sellerServices";
 
 interface ProfileProps {
   sideBarProps: {
@@ -38,12 +40,18 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
   const [selected, setSelected] = useState(0);
   const location = useLocation();
 
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const index = drawerItems.findIndex(
       (item) => item.path === location.pathname
     );
     setSelected(index);
   }, [location]);
+
+  useEffect(() => {
+    dispatch(getAllSellerBooks());
+  }, []);
 
   const handleDrawerClose = () => {
     setIsClosing(true);

@@ -10,7 +10,23 @@ import {
 import { useState } from "react";
 import BookCard from "../BookCard";
 
-const SellerBookCard = () => {
+type propsType = {
+  title: string;
+  author: string;
+  quantity: number;
+  price: number;
+  bookID: string;
+  imageURL: string;
+};
+
+const SellerBookCard = ({
+  title,
+  author,
+  quantity,
+  price,
+
+  imageURL,
+}: propsType) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -23,7 +39,13 @@ const SellerBookCard = () => {
 
   return (
     <>
-      <BookCard>
+      <BookCard
+        title={title}
+        author={author}
+        price={price}
+        quantity={quantity}
+        imageURL={imageURL}
+      >
         <CardActions>
           <Button size="small" variant="contained" fullWidth>
             Edit

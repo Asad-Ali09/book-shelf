@@ -5,9 +5,11 @@ interface IBook extends Document {
   title: string;
   description: string;
   coverPhoto: string;
-  author: IUser["_id"];
+  author: "string";
+  seller: IUser["_id"];
   price: number;
   quantity: number;
+  genres: string[];
   readonly createdAt: Date;
 }
 
@@ -28,16 +30,30 @@ const bookSchema = new Schema<IBook>({
     required: [true, "PLease provide cover photo for book"],
   },
   author: {
+    type: String,
+    trim: true,
+    required: [true, "Please provide an author"],
+  },
+  seller: {
     type: mongoose.Types.ObjectId,
     ref: "User",
     required: [true, "Please provide an author"],
   },
   price: { type: Number, required: [true, "Please Provide price for book"] },
   quantity: { type: Number, default: 1 },
+  genres: {
+    type: [String],
+    required: [true, "Please provide genres for book"],
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+});
+
+bookSchema.pre<IBook>("save", function (next) {
+  this.genres = this.genres.map((genre) => genre.toLowerCase().trim());
+  next();
 });
 
 const BookModel = mongoose.model<IBook>("Book", bookSchema);

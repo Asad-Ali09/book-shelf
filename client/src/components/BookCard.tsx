@@ -7,14 +7,23 @@ import {
   Typography,
 } from "@mui/material";
 
-const imgSrc =
-  "https://marketplace.canva.com/EAFaQMYuZbo/1/0/1003w/canva-brown-rusty-mystery-novel-book-cover-hG1QhA7BiBU.jpg";
-
 type propsType = {
+  title: string;
+  author: string;
+  quantity: number;
+  price: number;
+  imageURL: string;
   children: JSX.Element;
 };
 
-const BookCard = ({ children }: propsType) => {
+const BookCard = ({
+  title,
+  author,
+  quantity,
+  price,
+  imageURL,
+  children,
+}: propsType) => {
   return (
     <>
       <Card sx={{ maxWidth: 300, width: "100%", my: 1 }} elevation={3}>
@@ -30,24 +39,24 @@ const BookCard = ({ children }: propsType) => {
           title="green iguana"
         >
           <img
-            src={imgSrc}
+            src={imageURL}
             alt="book cover"
             style={{ objectFit: "cover", height: "100%" }}
           />
         </CardMedia>
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            OLIVIA WILSON
+            {author}
           </Typography>
           <Typography gutterBottom variant="h5" component="div">
-            SOUL
+            {title}
           </Typography>
           <Stack direction="row" spacing={1}>
             <Typography variant="body2" color="text.secondary">
               Quantity:{" "}
             </Typography>
             <Typography variant="body2" color="black">
-              10
+              {quantity}
             </Typography>
           </Stack>
           <Stack direction="row" spacing={1}>
@@ -55,7 +64,7 @@ const BookCard = ({ children }: propsType) => {
               Price:{" "}
             </Typography>
             <Typography variant="body2" color="black">
-              $110
+              ${price}
             </Typography>
           </Stack>
         </CardContent>

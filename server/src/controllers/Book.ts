@@ -4,11 +4,15 @@ import customError from "../error/customError";
 import { SortOrder } from "mongoose";
 
 const createBook = async (req: Request, res: Response) => {
-  const { title, description, coverPhoto, price, quantity } = req.body;
+  const { title, description, coverPhoto, price, quantity, author, genres } =
+    req.body;
 
-  if (!title || !description || !coverPhoto || !price) {
+  if (!title || !description || !coverPhoto || !price || !author) {
     throw new customError(400, "Please provide all required fields");
   }
+
+  if (!genres || !Array.isArray(genres) || genres.length === 0)
+    throw new customError(400, "Please provide at least one genre");
 
   if (
     (quantity && typeof quantity !== "number") ||
@@ -23,8 +27,10 @@ const createBook = async (req: Request, res: Response) => {
     description,
     coverPhoto,
     price,
-    author: req.user?._id,
+    author,
     quantity: _quantity,
+    seller: req.user?._id,
+    genres,
   });
 
   return res
@@ -46,7 +52,7 @@ const deleteBook = async (req: Request, res: Response): Promise<void> => {
 };
 
 const getAllBooks = async (req: Request, res: Response) => {
-  const authorID = req.user?._id;
+  const sellerID = req.user?._id;
 
   // sortBy (string) : createdAt, title, price, quantity
   // sortOrder (string) : asc, desc
@@ -61,7 +67,7 @@ const getAllBooks = async (req: Request, res: Response) => {
     sortOptions["createdAt"] = -1;
   }
 
-  const books = await Book.find({ author: authorID })
+  const books = await Book.find({ seller: sellerID })
     .sort(sortOptions)
     .collation({ locale: "en", strength: 1 });
 

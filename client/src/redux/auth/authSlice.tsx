@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { loginUser, signUp } from "./authServices";
+import { loginUser, logout, signUp } from "./authServices";
+import { BookReturnType, addBook, getAllSellerBooks } from "./sellerServices";
 
 //TODO: load user data from local storage
 const user: IUser = {
@@ -10,7 +11,7 @@ const user: IUser = {
 
 export interface AuthType {
   user: IUser;
-  myBooks: any[];
+  myBooks: IBook[];
   isLoggedIn: boolean;
   loading: boolean;
   error: string | null;
@@ -33,10 +34,41 @@ const authSlice = createSlice({
     },
   },
   extraReducers(builder) {
-    builder.addMatcher(isAnyOf(loginUser.pending, signUp.pending), (state) => {
-      state.loading = true;
-      state.error = null;
+    builder.addCase(logout.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message || "Can't logout";
     });
+    builder.addCase(
+      addBook.fulfilled,
+      (state, action: PayloadAction<BookReturnType>) => {
+        state.myBooks.unshift(action.payload.data);
+        state.loading = false;
+      }
+    );
+    builder.addCase(
+      getAllSellerBooks.fulfilled,
+      (state, action: PayloadAction<IBook[]>) => {
+        state.myBooks = action.payload;
+        state.loading = false;
+      }
+    );
+    builder.addCase(getAllSellerBooks.rejected, (state, action) => {
+      state.error = action.error.message || "Can't get books";
+      state.loading = false;
+    });
+    builder.addMatcher(
+      isAnyOf(
+        loginUser.pending,
+        signUp.pending,
+        logout.pending,
+        addBook.pending,
+        getAllSellerBooks.pending
+      ),
+      (state) => {
+        state.loading = true;
+        state.error = null;
+      }
+    );
     builder.addMatcher(
       isAnyOf(loginUser.fulfilled, signUp.fulfilled),
       (state, action) => {
@@ -48,7 +80,7 @@ const authSlice = createSlice({
       }
     );
     builder.addMatcher(
-      isAnyOf(loginUser.rejected, signUp.rejected),
+      isAnyOf(loginUser.rejected, signUp.rejected, addBook.rejected),
       (state, action: PayloadAction<any>) => {
         state.loading = false;
         state.error = action.payload;
