@@ -50,7 +50,7 @@ const deleteBook = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json({ message: "Book removed successfully" });
 };
 
-const getAllBooks = async (req: Request, res: Response) => {
+const getMyBooks = async (req: Request, res: Response) => {
   const sellerID = req.user?._id;
 
   // sortBy (string) : createdAt, title, price, quantity
@@ -115,4 +115,19 @@ const updateBook = async (req: Request, res: Response) => {
     .json({ message: "book updated successfully", data: updatedBook });
 };
 
-export { createBook, updateBook, getAllBooks, getSingleBook, deleteBook };
+const getAllBooks = async (req: Request, res: Response) => {
+  // TODO: improve the route to send books in chunks based on query params
+  const data = await Book.find({})
+    .sort({ createdAt: -1 })
+    .populate("seller", "name email _id");
+  res.status(200).json({ data });
+};
+
+export {
+  createBook,
+  updateBook,
+  getAllBooks,
+  getSingleBook,
+  deleteBook,
+  getMyBooks,
+};
