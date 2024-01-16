@@ -7,8 +7,13 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "../../hooks/useTypedSelector";
+import { setError } from "../../redux/auth/authSlice";
+import { deleteBook } from "../../redux/auth/sellerServices";
 import BookCard from "../BookCard";
+import { BookFormDialog } from "./BookFormDialog";
 
 type propsType = {
   title: string;
@@ -17,6 +22,8 @@ type propsType = {
   price: number;
   bookID: string;
   imageURL: string;
+  description: string;
+  genres: string[];
 };
 
 const SellerBookCard = ({
@@ -24,11 +31,18 @@ const SellerBookCard = ({
   author,
   quantity,
   price,
-
+  bookID,
   imageURL,
 }: propsType) => {
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
+  const handleClickEditDailogOpen = () => {
+    setEditOpen(true);
+  };
+
+  const dispath = useAppDispatch();
+  const { error } = useAppSelector((state) => state.auth);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -36,6 +50,22 @@ const SellerBookCard = ({
   const handleClose = () => {
     setOpen(false);
   };
+
+  const removeBook = () => {
+    dispath(deleteBook(bookID))
+      .unwrap()
+      .then((res) => {
+        toast.success(res.message);
+      });
+    handleClose();
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispath(setError(null));
+    }
+  }, [error]);
 
   return (
     <>
@@ -47,7 +77,12 @@ const SellerBookCard = ({
         imageURL={imageURL}
       >
         <CardActions>
-          <Button size="small" variant="contained" fullWidth>
+          <Button
+            size="small"
+            variant="contained"
+            fullWidth
+            onClick={handleClickEditDailogOpen}
+          >
             Edit
           </Button>
           <Button
@@ -79,11 +114,19 @@ const SellerBookCard = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} autoFocus>
-            Disagree
+            Cancel
           </Button>
-          <Button onClick={handleClose}>Agree</Button>
+          <Button onClick={removeBook}>Delete</Button>
         </DialogActions>
       </Dialog>
+
+      {/* Edit Book Dailogue */}
+      <BookFormDialog
+        open={editOpen}
+        setOpen={setEditOpen}
+        key={bookID}
+        bookID={bookID}
+      />
     </>
   );
 };

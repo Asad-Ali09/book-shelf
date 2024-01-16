@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import BookCard from "../components/BookCard";
-import { bookGenres } from "../components/SellerBooks/TopBar";
+import bookGenres from "../genres";
 import SideBar from "../components/SideBar";
 
 interface StoreProps {
@@ -149,7 +149,7 @@ const TopBar = () => {
 const BuyerBookCard = () => {
   return (
     <>
-      <BookCard>
+      <BookCard title={""} author={""} imageURL={""} price={5} quantity={10}>
         <>
           <Button fullWidth>Add to Cart</Button>
         </>

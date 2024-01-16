@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { format, subDays, subHours } from "date-fns";
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import applyPagination from "../../utils/pagination";
 
 const now = new Date();
 
@@ -164,15 +165,7 @@ const data = [
 
 type dType = (typeof data)[0];
 
-export function applyPagination<T>(
-  documents: T[],
-  page: number,
-  rowsPerPage: number
-) {
-  return documents.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-}
-
-const useCustomers = (page: any, rowsPerPage: any) => {
+const useCustomers = (page: number, rowsPerPage: number) => {
   return useMemo(() => {
     return applyPagination(data, page, rowsPerPage);
   }, [page, rowsPerPage]);

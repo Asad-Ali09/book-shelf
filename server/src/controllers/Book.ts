@@ -44,11 +44,10 @@ const deleteBook = async (req: Request, res: Response): Promise<void> => {
 
   const deletedBook = await Book.findByIdAndDelete(bookID);
   if (!deletedBook) {
-    res.status(404).json({ error: "Book not found" });
-    return;
+    throw new customError(404, "Book not found");
   }
 
-  res.status(204).json({ message: "Book removed successfully" });
+  res.status(200).json({ message: "Book removed successfully" });
 };
 
 const getAllBooks = async (req: Request, res: Response) => {
@@ -83,8 +82,7 @@ const getSingleBook = async (req: Request, res: Response) => {
     "-password"
   );
   if (!book) {
-    res.status(404).json({ error: "Book not found" });
-    return;
+    throw new customError(404, "Book not found");
   }
   res.status(200).json({ data: book });
 };
@@ -102,7 +100,7 @@ const updateBook = async (req: Request, res: Response) => {
   )
     throw new customError(400, "Please provide valid data");
 
-  const book = await Book.findOne({ _id: bookID, author: authorID });
+  const book = await Book.findOne({ _id: bookID, seller: authorID });
   if (!book) throw new customError(404, "Book not found");
 
   book.title = title || book.title;

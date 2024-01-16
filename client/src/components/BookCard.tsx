@@ -35,6 +35,8 @@ const BookCard = ({
             justifyContent: "center",
             bgcolor: "#F0F0EB",
             py: 1,
+            // backgroundImage: `url(${imageURL})`,
+            backgroundImage: `linear-gradient(to right bottom, rgba(0,0,0,0.7), rgb(47 41 41 / 80%)),url(${imageURL})`,
           }}
           title="green iguana"
         >

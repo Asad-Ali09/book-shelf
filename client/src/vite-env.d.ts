@@ -12,7 +12,7 @@ interface IBook {
   title: string;
   description: string;
   coverPhoto: string;
-  genre: string;
+  genres: string[];
   author: string;
   price: number;
   quantity: number;
