@@ -15,6 +15,7 @@ import * as React from "react";
 import logoSrc from "../assets/logo-white.png";
 import { Sell, ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../hooks/useTypedSelector";
 
 interface NavBarProps {
   isClosing: boolean;
@@ -27,6 +28,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
     React.useState<null | HTMLElement>(null);
 
   const navigate = useNavigate();
+  const cartItems = useAppSelector((state) => state.cart.cartItems.length);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -200,8 +202,13 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton size="large" color="inherit" aria-label="shopping cart">
-              <Badge badgeContent={2} color="error">
+            <IconButton
+              size="large"
+              color="inherit"
+              aria-label="shopping cart"
+              onClick={() => navigate("/cart")}
+            >
+              <Badge badgeContent={cartItems} color="error">
                 <ShoppingCart />
               </Badge>
             </IconButton>

@@ -26,7 +26,10 @@ const BookCard = ({
 }: propsType) => {
   return (
     <>
-      <Card sx={{ maxWidth: 300, width: "100%", my: 1 }} elevation={3}>
+      <Card
+        sx={{ maxWidth: 300, width: "100%", my: 1, height: "100%" }}
+        elevation={3}
+      >
         <CardMedia
           sx={{
             height: 200,

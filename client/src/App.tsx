@@ -12,6 +12,7 @@ import OrdersCompleted from "./pages/User/OrdersCompleted";
 import { useState } from "react";
 import MyBooks from "./pages/User/MyBooks";
 import Store from "./pages/Store";
+import Cart from "./pages/Cart";
 
 axios.defaults.withCredentials = true;
 
@@ -46,6 +47,8 @@ const App = () => {
           </Route>
 
           <Route path="store" element={<Store sideBarProps={sideBarProps} />} />
+          <Route path="cart" element={<Cart sideBarProps={sideBarProps} />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
 

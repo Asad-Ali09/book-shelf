@@ -6,6 +6,7 @@ type SideBarPropsType = {
   handleDrawerClose: () => void;
   handleDrawerTransitionEnd: () => void;
   children: JSX.Element;
+  anchor?: "left" | "right" | "top" | "bottom";
 };
 
 const SideBar = ({
@@ -14,6 +15,7 @@ const SideBar = ({
   handleDrawerClose,
   handleDrawerTransitionEnd,
   children,
+  anchor,
 }: SideBarPropsType) => {
   return (
     <>
@@ -25,6 +27,7 @@ const SideBar = ({
       >
         <Drawer
           variant="temporary"
+          anchor={anchor || "left"}
           open={mobileOpen}
           onTransitionEnd={handleDrawerTransitionEnd}
           onClose={handleDrawerClose}
@@ -42,6 +45,7 @@ const SideBar = ({
           {children}
         </Drawer>
         <Drawer
+          anchor={anchor || "left"}
           variant="permanent"
           sx={{
             width: drawerWidth,

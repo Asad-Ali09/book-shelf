@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getAllBooks } from "./bookServices";
 
 export interface bookSliceType {
-  books: IBook[];
+  books: RIBook[];
   loading: boolean;
   error: string | null;
 }

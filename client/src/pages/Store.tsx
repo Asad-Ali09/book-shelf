@@ -16,8 +16,10 @@ import {
   Stack,
   TablePagination,
   TextField,
+  Theme,
   Toolbar,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import React, {
   ChangeEvent,
@@ -34,6 +36,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
 import { getAllBooks } from "../redux/books/bookServices";
 import { setError } from "../redux/books/bookSlice";
 import applyPagination from "../utils/pagination";
+import { addItemToCart } from "../redux/cart/cartSlice";
 
 interface StoreProps {
   sideBarProps: {
@@ -49,6 +52,7 @@ const Store = ({ sideBarProps }: StoreProps) => {
   const dispatch = useAppDispatch();
   const { books: allBooks, error } = useAppSelector((state) => state.books);
 
+  const md = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
 
@@ -214,12 +218,16 @@ const Store = ({ sideBarProps }: StoreProps) => {
     </List>
   );
 
+  const addToCart = (book: RIBook) => {
+    dispatch(addItemToCart(book));
+  };
+
   return (
     <>
       <Box display={"flex"} minHeight={"100vh"}>
         <SideBar
           mobileOpen={mobileOpen}
-          drawerWidth={340}
+          drawerWidth={md ? 240 : 300}
           handleDrawerClose={handleDrawerClose}
           handleDrawerTransitionEnd={handleDrawerTransitionEnd}
         >
@@ -257,16 +265,19 @@ const Store = ({ sideBarProps }: StoreProps) => {
             {books.map((book, index) => {
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <BuyerBookCard
-                    title={book.title}
-                    author={book.author}
-                    bookID={book._id}
-                    price={book.price}
-                    quantity={book.quantity}
-                    imageURL={book.coverPhoto}
-                    key={book._id}
-                    genres={book.genres}
-                  />
+                  <Stack alignItems={"center"} height={"100%"}>
+                    <BuyerBookCard
+                      title={book.title}
+                      author={book.author}
+                      bookID={book._id}
+                      price={book.price}
+                      quantity={book.quantity}
+                      imageURL={book.coverPhoto}
+                      key={book._id}
+                      genres={book.genres}
+                      addToCart={() => addToCart(book)}
+                    />
+                  </Stack>
                 </Grid>
               );
             })}
@@ -296,14 +307,18 @@ type topBarProps = {
 };
 
 const TopBar = ({ search, setSearch }: topBarProps) => {
+  const md = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
+
   return (
     <>
       <Grid container spacing={2} pb={2} alignItems={"center"}>
         {/* <Stack direction={"row"} alignItems={"center"} pb={2}> */}
         <Grid item xs={6} lg={4}>
-          <Typography fontSize={36} fontFamily={"inter"} variant="h3" px={2}>
-            Book Store
-          </Typography>
+          {!md && (
+            <Typography fontSize={36} fontFamily={"inter"} variant="h3" px={2}>
+              Book Store
+            </Typography>
+          )}
         </Grid>
         <Grid item xs={6} lg={5}>
           <Stack ml={"auto"} direction={"row"} alignItems={"center"}>
@@ -327,7 +342,7 @@ const TopBar = ({ search, setSearch }: topBarProps) => {
   );
 };
 
-type propsType = {
+interface propsType {
   title: string;
   author: string;
   quantity: number;
@@ -335,10 +350,12 @@ type propsType = {
   bookID: string;
   imageURL: string;
   genres: string[];
-};
+  addToCart: () => void;
+}
 
 const BuyerBookCard = (props: propsType) => {
-  const { title, author, quantity, price, imageURL } = props;
+  const { title, author, quantity, price, imageURL, addToCart } = props;
+
   return (
     <>
       <BookCard
@@ -349,7 +366,9 @@ const BuyerBookCard = (props: propsType) => {
         quantity={quantity}
       >
         <>
-          <Button fullWidth>Add to Cart</Button>
+          <Button fullWidth onClick={addToCart}>
+            Add to Cart
+          </Button>
         </>
       </BookCard>
     </>

@@ -19,3 +19,5 @@ interface IBook {
   createdAt: Date;
   seller?: IUser;
 }
+
+type RIBook = Required<IBook>;
