@@ -1,22 +1,38 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { placeOrder } from "./cartServices";
 
-interface cartType {
+export interface cartType {
   cartItems: {
     book: RIBook;
     quantity: number;
   }[];
-  shippingAddress: any;
+  shippingDetails: shippingDetailsType;
   itemsPrice: number;
   shippingPrice: number;
   totalPrice: number;
+  loading: boolean;
+  orderID?: string;
+  error?: string | null;
 }
+
+const initialShippingDetails: shippingDetailsType = {
+  firstName: "",
+  lastName: "",
+  address1: "",
+  address2: "",
+  city: "",
+  state: "",
+  zip: 0,
+  country: "",
+};
 
 const initialState: cartType = {
   cartItems: [],
-  shippingAddress: {},
+  shippingDetails: initialShippingDetails,
   itemsPrice: 0,
   shippingPrice: 0,
   totalPrice: 0,
+  loading: false,
 };
 
 const cartSlice = createSlice({
@@ -70,7 +86,7 @@ const cartSlice = createSlice({
     },
     calcTotalPrice: (state) => {
       let total = 0;
-      let authors: string[] = [];
+      const authors: string[] = [];
       state.cartItems.forEach((item) => {
         if (!authors.includes(item.book.seller._id)) {
           authors.push(item.book.seller._id);
@@ -81,6 +97,33 @@ const cartSlice = createSlice({
       state.shippingPrice = authors.length * 5;
       state.totalPrice = state.itemsPrice + state.shippingPrice;
     },
+    setShippingDetails: (state, action: PayloadAction<shippingDetailsType>) => {
+      state.shippingDetails = action.payload;
+    },
+    clearCart: (state) => {
+      state.cartItems = [];
+      state.itemsPrice = 0;
+      state.shippingPrice = 0;
+      state.totalPrice = 0;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+  },
+  extraReducers(builder) {
+    builder.addCase(placeOrder.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(placeOrder.fulfilled, (state, action) => {
+      state.orderID = action.payload.data;
+      cartSlice.caseReducers.clearCart(state);
+      state.loading = false;
+    });
+    builder.addCase(placeOrder.rejected, (state, action) => {
+      state.error = action.error.message || "Something went wrong";
+      state.loading = false;
+    });
   },
 });
 
@@ -91,4 +134,6 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   calcTotalPrice,
+  setShippingDetails,
+  setError,
 } = cartSlice.actions;

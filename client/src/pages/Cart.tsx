@@ -21,6 +21,7 @@ import {
   increaseQuantity,
   removeItem,
 } from "../redux/cart/cartSlice";
+import { useNavigate } from "react-router-dom";
 
 interface CartPropsType {
   sideBarProps: {
@@ -87,6 +88,8 @@ const InterTypo = styled(Typography)({
 const Drawer = () => {
   const md = useMediaQuery((theme: Theme) => theme.breakpoints.down("md"));
 
+  const navigate = useNavigate();
+
   const { itemsPrice, shippingPrice, totalPrice } = useAppSelector(
     (state) => state.cart
   );
@@ -137,8 +140,12 @@ const Drawer = () => {
             </Stack>
           </Stack>
           <Stack spacing={1} my={2} direction={md ? "column" : "row"}>
-            <Button variant="contained">Checkout</Button>
-            <Button variant="outlined">Shop More</Button>
+            <Button variant="contained" onClick={() => navigate("/checkout")}>
+              Checkout
+            </Button>
+            <Button variant="outlined" onClick={() => navigate("/store")}>
+              Shop More
+            </Button>
           </Stack>
         </Box>
       </Box>

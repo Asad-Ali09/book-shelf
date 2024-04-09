@@ -13,6 +13,7 @@ import { useState } from "react";
 import MyBooks from "./pages/User/MyBooks";
 import Store from "./pages/Store";
 import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 axios.defaults.withCredentials = true;
 
@@ -48,6 +49,7 @@ const App = () => {
 
           <Route path="store" element={<Store sideBarProps={sideBarProps} />} />
           <Route path="cart" element={<Cart sideBarProps={sideBarProps} />} />
+          <Route path="checkout" element={<Checkout />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

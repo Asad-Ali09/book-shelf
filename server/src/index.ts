@@ -7,6 +7,7 @@ import cors from "cors";
 
 import UserRoute from "./routes/User";
 import BookRoute from "./routes/Book";
+import OrderRoute from "./routes/Order";
 import errorhandler from "./middlewares/errorHandler";
 import notFound from "./middlewares/notFound";
 
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", UserRoute);
 app.use("/api/v1/books", BookRoute);
+app.use("/api/v1/orders", OrderRoute);
 
 // Erro handling
 app.use(errorhandler);
