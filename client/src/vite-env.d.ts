@@ -32,3 +32,29 @@ type shippingDetailsType = {
   zip: number;
   country: string;
 };
+
+interface IOrder {
+  _id: string;
+  books: {
+    book: OrderBookType;
+    quantity: number;
+    status: "pending" | "completed" | "cancelled";
+  }[];
+  buyerName: string;
+  totalPrice: number;
+  shippingAddress: string;
+  status: "pending" | "completed" | "cancelled";
+  createdAt: Date;
+}
+
+type OrderBooksType = IOrder["books"];
+
+type OrderBookType = {
+  _id: string;
+  bookID: string;
+  title: string;
+  coverPhoto: string;
+  author: string;
+  price: number;
+  quantity: number;
+};
