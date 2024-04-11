@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
 import { loginUser } from "../redux/auth/authServices";
 import { setError } from "../redux/auth/authSlice";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
   return (
     <Typography
@@ -57,14 +58,14 @@ export default function SignIn() {
       toast.error(error);
     }
     dispatch(setError(null));
-  }, [error]);
+  }, [error, dispatch]);
 
   useEffect(() => {
     if (isLoggedIn) {
       setFormData(initialState);
       navigate("/");
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   return (
     <Container component="main" maxWidth="xs">

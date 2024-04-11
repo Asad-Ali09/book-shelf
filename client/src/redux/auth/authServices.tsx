@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { FromDataType as LoginPropsType } from "../../pages/SignIn";
 import { SignUpFormType as SignUpPropsType } from "../../pages/SignUp";
@@ -42,8 +43,17 @@ const signUp = createAsyncThunk(
 );
 
 const logout = createAsyncThunk("authSlice/logout", async () => {
-  await axios.post(`${authURL}/logout`);
+  await axios.get(`${authURL}`);
   localStorage.removeItem("user");
 });
 
-export { loginUser, signUp, logout };
+const isLoggedIn = async () => {
+  try {
+    const response = await axios.get<boolean>(`${authURL}/isloggedin`);
+    return response.data;
+  } catch (err: any) {
+    return false;
+  }
+};
+
+export { loginUser, signUp, logout, isLoggedIn };

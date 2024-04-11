@@ -4,8 +4,11 @@ import SellerBookCard from "../../components/SellerBooks/SellerBookCard";
 import TopBar from "../../components/SellerBooks/TopBar";
 import { useAppSelector } from "../../hooks/useTypedSelector";
 import applyPagination from "../../utils/pagination";
+import useRedirectUser from "../../hooks/useRedirectUser";
 
 const MyBooks = () => {
+  useRedirectUser("/login");
+
   const { myBooks } = useAppSelector((state) => state.auth);
 
   const [page, setPage] = useState(0);
@@ -14,7 +17,7 @@ const MyBooks = () => {
   const useBooks = () => {
     return useMemo(() => {
       return applyPagination(myBooks, page, rowsPerPage);
-    }, [page, rowsPerPage, myBooks]);
+    }, []);
   };
 
   const books = useBooks();

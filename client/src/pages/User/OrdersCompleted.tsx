@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/useTypedSelector";
 import { setError } from "../../redux/auth/authSlice";
 import { getAllOrders } from "../../redux/orders/orderServices";
 import applyPagination from "../../utils/pagination";
+import useRedirectUser from "../../hooks/useRedirectUser";
 
 const useOrders = (page: number, rowsPerPage: number) => {
   const { orders } = useAppSelector((state) => state.orders);
@@ -42,12 +43,14 @@ const useOrders = (page: number, rowsPerPage: number) => {
 // };
 
 const OrdersCompleted = () => {
+  useRedirectUser("/login");
+
   const { error } = useAppSelector((state) => state.orders);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(getAllOrders());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (error) {

@@ -24,6 +24,8 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar";
 import { useAppDispatch } from "../../hooks/useTypedSelector";
 import { getAllSellerBooks } from "../../redux/auth/sellerServices";
+import useRedirectUser from "../../hooks/useRedirectUser";
+import { logout } from "../../redux/auth/authServices";
 
 interface ProfileProps {
   sideBarProps: {
@@ -34,6 +36,8 @@ interface ProfileProps {
 }
 
 const Profile = ({ sideBarProps }: ProfileProps) => {
+  useRedirectUser("/login");
+
   const { mobileOpen, setMobileOpen, setIsClosing } = sideBarProps;
   const drawerWidth = 240;
 
@@ -51,7 +55,7 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
 
   useEffect(() => {
     dispatch(getAllSellerBooks());
-  }, []);
+  }, [dispatch]);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -74,6 +78,11 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
       path: "/profile/edit",
     },
   ];
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   const drawer = (
     <Stack height={"100%"} bgcolor={"white"}>
@@ -118,6 +127,7 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
         startIcon={<Logout />}
         variant="contained"
         sx={{ mt: "auto", borderRadius: 0 }}
+        onClick={handleLogout}
       >
         Logout
       </Button>

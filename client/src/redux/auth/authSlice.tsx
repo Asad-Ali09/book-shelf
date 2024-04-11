@@ -41,6 +41,16 @@ const authSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    setIsLogginIn: (state, action: PayloadAction<boolean>) => {
+      state.isLoggedIn = action.payload;
+    },
+    resetState: (state) => {
+      state.error = initialState.error;
+      state.isLoggedIn = initialState.isLoggedIn;
+      state.loading = initialState.loading;
+      state.myBooks = initialState.myBooks;
+      state.user = initialState.user;
+    },
   },
   extraReducers(builder) {
     builder.addCase(
@@ -75,6 +85,9 @@ const authSlice = createSlice({
         return book;
       });
       state.loading = false;
+    });
+    builder.addCase(logout.fulfilled, (state) => {
+      authSlice.caseReducers.resetState(state);
     });
     builder.addMatcher(
       isAnyOf(logout.rejected, deleteBook.rejected),
@@ -124,4 +137,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { setError, setLoading } = authSlice.actions;
+export const { setError, setLoading, setIsLogginIn } = authSlice.actions;

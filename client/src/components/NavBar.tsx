@@ -15,7 +15,8 @@ import * as React from "react";
 import logoSrc from "../assets/logo-white.png";
 import { Sell, ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../hooks/useTypedSelector";
+import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
+import { logout } from "../redux/auth/authServices";
 
 interface NavBarProps {
   isClosing: boolean;
@@ -28,6 +29,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
     React.useState<null | HTMLElement>(null);
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.cartItems.length);
 
   const isMenuOpen = Boolean(anchorEl);
@@ -56,6 +58,11 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
     }
   };
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
+
   const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
@@ -80,7 +87,14 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
       >
         My account
       </MenuItem>
-      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+      <MenuItem
+        onClick={() => {
+          handleLogout();
+          handleMenuClose();
+        }}
+      >
+        Logout
+      </MenuItem>
     </Menu>
   );
 

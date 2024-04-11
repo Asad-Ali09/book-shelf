@@ -1,3 +1,4 @@
+import { CircularProgress, Link as MUILink, Stack } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,14 +8,14 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { FormEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { CircularProgress, Link as MUILink, Stack } from "@mui/material";
 import logoSrc from "../assets/logo.png";
 import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
 import { signUp } from "../redux/auth/authServices";
-import toast from "react-hot-toast";
 import { setError } from "../redux/auth/authSlice";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Copyright(props: any) {
   return (
     <Typography
@@ -64,14 +65,14 @@ export default function SignIn() {
       setFormData(initialState);
       navigate("/");
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, navigate]);
 
   useEffect(() => {
     if (error) {
       toast.error(error);
     }
     dispatch(setError(null));
-  }, [error]);
+  }, [error, dispatch]);
 
   return (
     <Container component="main" maxWidth="xs">

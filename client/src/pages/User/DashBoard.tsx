@@ -3,8 +3,11 @@ import { Box, Grid } from "@mui/material";
 import { BarChart } from "../../components/Dashboard/BarChart";
 import DataCard from "../../components/Dashboard/DataCard";
 import { PieChart } from "../../components/Dashboard/PieCart";
+import useRedirectUser from "../../hooks/useRedirectUser";
 
 const DashBoard = () => {
+  useRedirectUser("/login");
+
   const sx = {
     width: [26, 44],
     height: [26, 44],
