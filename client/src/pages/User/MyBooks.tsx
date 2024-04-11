@@ -1,13 +1,25 @@
-import { Divider, Grid, Stack, TablePagination } from "@mui/material";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import {
+  Divider,
+  Grid,
+  Stack,
+  TablePagination,
+  Typography,
+} from "@mui/material";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import SellerBookCard from "../../components/SellerBooks/SellerBookCard";
 import TopBar from "../../components/SellerBooks/TopBar";
-import { useAppSelector } from "../../hooks/useTypedSelector";
+import { useAppDispatch, useAppSelector } from "../../hooks/useTypedSelector";
 import applyPagination from "../../utils/pagination";
 import useRedirectUser from "../../hooks/useRedirectUser";
+import { getAllSellerBooks } from "../../redux/auth/sellerServices";
 
 const MyBooks = () => {
   useRedirectUser("/login");
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(getAllSellerBooks());
+  }, [dispatch]);
 
   const { myBooks } = useAppSelector((state) => state.auth);
 
@@ -42,6 +54,13 @@ const MyBooks = () => {
       <Divider sx={{ my: 2 }} />
 
       <Grid container spacing={[1, 2]}>
+        {books.length === 0 && (
+          <>
+            <Typography variant="h3" textAlign={"center"} width={"100%"}>
+              No Books added yet
+            </Typography>
+          </>
+        )}
         {books.map((book, index) => (
           <Grid item lg={3} md={4} sm={6} xs={12} key={index}>
             <Stack alignItems={"center"}>
@@ -60,17 +79,21 @@ const MyBooks = () => {
           </Grid>
         ))}
       </Grid>
-      <Divider />
-      <TablePagination
-        sx={{ mt: "auto" }}
-        component="div"
-        count={myBooks.length}
-        onPageChange={handlePageChange}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        page={page}
-        rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[4, 8, 16]}
-      />
+      {books.length > 0 && (
+        <>
+          <Divider />
+          <TablePagination
+            sx={{ mt: "auto" }}
+            component="div"
+            count={myBooks.length}
+            onPageChange={handlePageChange}
+            onRowsPerPageChange={handleRowsPerPageChange}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rowsPerPageOptions={[4, 8, 16]}
+          />
+        </>
+      )}
     </Stack>
   );
 };

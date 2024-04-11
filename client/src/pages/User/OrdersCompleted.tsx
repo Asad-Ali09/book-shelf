@@ -86,14 +86,22 @@ const OrdersCompleted = () => {
             <Typography variant="h4">Orders</Typography>
           </Stack>
           <Box maxWidth={"90vw"}>
-            <OrdersTable
-              count={orders.length}
-              items={orders}
-              onPageChange={handlePageChange}
-              onRowsPerPageChange={handleRowsPerPageChange}
-              page={page}
-              rowsPerPage={rowsPerPage}
-            />
+            {orders.length === 0 ? (
+              <>
+                <Typography variant="h3" textAlign={"center"} width={"100%"}>
+                  No Orders Recieved yet
+                </Typography>
+              </>
+            ) : (
+              <OrdersTable
+                count={orders.length}
+                items={orders}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                page={page}
+                rowsPerPage={rowsPerPage}
+              />
+            )}
           </Box>
         </Stack>
       </Container>

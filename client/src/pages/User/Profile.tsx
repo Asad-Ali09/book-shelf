@@ -22,9 +22,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import SideBar from "../../components/SideBar";
-import { useAppDispatch } from "../../hooks/useTypedSelector";
-import { getAllSellerBooks } from "../../redux/auth/sellerServices";
 import useRedirectUser from "../../hooks/useRedirectUser";
+import { useAppDispatch, useAppSelector } from "../../hooks/useTypedSelector";
 import { logout } from "../../redux/auth/authServices";
 
 interface ProfileProps {
@@ -45,6 +44,7 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
   const location = useLocation();
 
   const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const index = drawerItems.findIndex(
@@ -52,10 +52,6 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
     );
     setSelected(index);
   }, [location]);
-
-  useEffect(() => {
-    dispatch(getAllSellerBooks());
-  }, [dispatch]);
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -91,13 +87,13 @@ const Profile = ({ sideBarProps }: ProfileProps) => {
 
       <Stack justifyContent={"center"} py={4} spacing={1} alignItems={"center"}>
         <Avatar
-          alt="Jhon Doe"
+          alt={user.name}
           src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1888&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           sx={{ bgcolor: "primary.main", width: 56, height: 56 }}
         >
-          <Typography variant="h5">J</Typography>
+          <Typography variant="h5">{user.name[0]}</Typography>
         </Avatar>
-        <Typography>Jhon Doe</Typography>
+        <Typography>{user.name}</Typography>
       </Stack>
 
       <Divider />

@@ -1,7 +1,7 @@
+import { Sell, ShoppingCart } from "@mui/icons-material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MenuIcon from "@mui/icons-material/Menu";
 import MoreIcon from "@mui/icons-material/MoreVert";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import { Avatar, Stack } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Badge from "@mui/material/Badge";
@@ -12,9 +12,8 @@ import MenuItem from "@mui/material/MenuItem";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import logoSrc from "../assets/logo-white.png";
-import { Sell, ShoppingCart } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import logoSrc from "../assets/logo-white.png";
 import { useAppDispatch, useAppSelector } from "../hooks/useTypedSelector";
 import { logout } from "../redux/auth/authServices";
 

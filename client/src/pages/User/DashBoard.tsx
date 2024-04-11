@@ -1,5 +1,5 @@
 import { AttachMoney, ShoppingCart, ShowChart } from "@mui/icons-material";
-import { Box, Grid } from "@mui/material";
+import { Alert, Box, Grid } from "@mui/material";
 import { BarChart } from "../../components/Dashboard/BarChart";
 import DataCard from "../../components/Dashboard/DataCard";
 import { PieChart } from "../../components/Dashboard/PieCart";
@@ -44,6 +44,11 @@ const DashBoard = () => {
   return (
     <>
       <Box p={2} pr={5}>
+        <center>
+          <Alert severity="warning" sx={{ mb: 4, width: "80%" }}>
+            This Page is not connected with API yet.
+          </Alert>
+        </center>
         <Grid container spacing={4} pr={[0, 0, 0, 5]}>
           {CardItems.map((item, index) => {
             return (
