@@ -31,6 +31,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.cartItems.length);
+  const { isLoggedIn } = useAppSelector((state) => state.auth);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -80,21 +81,35 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem
-        onClick={() => {
-          handleMenuClose(), navigate("/profile/dashboard");
-        }}
-      >
-        My account
-      </MenuItem>
-      <MenuItem
-        onClick={() => {
-          handleLogout();
-          handleMenuClose();
-        }}
-      >
-        Logout
-      </MenuItem>
+      {isLoggedIn && (
+        <>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose(), navigate("/profile/dashboard");
+            }}
+          >
+            My account
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleLogout();
+              handleMenuClose();
+            }}
+          >
+            Logout
+          </MenuItem>
+        </>
+      )}
+      {!isLoggedIn && (
+        <MenuItem
+          onClick={() => {
+            navigate("/login");
+            handleMenuClose();
+          }}
+        >
+          Login
+        </MenuItem>
+      )}
     </Menu>
   );
 
@@ -129,18 +144,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
         </IconButton>
         <p>Shopping Cart</p>
       </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
+
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -207,15 +211,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
             >
               Sell Books
             </Typography>
-            <IconButton
-              size="large"
-              aria-label="show new notifications"
-              color="inherit"
-            >
-              <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+
             <IconButton
               size="large"
               color="inherit"
@@ -226,6 +222,7 @@ export default function NavBar({ isClosing, setMobileOpen }: NavBarProps) {
                 <ShoppingCart />
               </Badge>
             </IconButton>
+
             <IconButton
               size="large"
               edge="end"
